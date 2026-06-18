@@ -1,0 +1,7 @@
+name = "santehnika-bot"
+main = "worker.js"
+compatibility_date = "2025-04-01"
+
+[vars]
+BOT_TOKEN = "твой_токен_бота"
+CHAT_ID = "твой_chat_id"
