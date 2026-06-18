@@ -18,30 +18,41 @@ export default {
     }
 
     try {
-      const orderData = await request.json();
+      const data = await request.json();
 
-      const itemsList = orderData.items
-        ? orderData.items
-            .map((item) => `• ${item.name} — ${item.price} ₽ × ${item.qty}`)
-            .join('\n')
-        : 'Не указан';
+      let message;
+      if (data.type === 'consultation') {
+        message = `
+📞 *Запрос консультации!*
 
-      const message = `
+👤 *Имя:* ${data.name || 'Не указано'}
+📞 *Телефон:* ${data.phone || 'Не указано'}
+💬 *Комментарий:* ${data.comment || 'Нет'}
+        `.trim();
+      } else {
+        const itemsList = data.items
+          ? data.items
+              .map((item) => `• ${item.name} — ${item.price} ₽ × ${item.qty}`)
+              .join('\n')
+          : 'Не указан';
+
+        message = `
 🛁 *Новый заказ!*
 
-👤 *Имя:* ${orderData.name || 'Не указано'}
-📞 *Телефон:* ${orderData.phone || 'Не указано'}
-📧 *Email:* ${orderData.email || 'Не указан'}
-📍 *Адрес:* ${orderData.address || 'Не указан'}
-🚚 *Доставка:* ${orderData.delivery === 'pickup' ? 'Самовывоз' : 'Курьером'}
-💳 *Оплата:* ${orderData.payment === 'cash' ? 'Наличными' : 'Картой'}
+👤 *Имя:* ${data.name || 'Не указано'}
+📞 *Телефон:* ${data.phone || 'Не указано'}
+📧 *Email:* ${data.email || 'Не указан'}
+📍 *Адрес:* ${data.address || 'Не указан'}
+🚚 *Доставка:* ${data.delivery === 'pickup' ? 'Самовывоз' : 'Курьером'}
+💳 *Оплата:* ${data.payment === 'cash' ? 'Наличными' : 'Картой'}
 
 *Состав заказа:*
 ${itemsList}
 
-💰 *Итого:* ${orderData.total || 0} ₽
-📝 *Комментарий:* ${orderData.comment || 'Нет'}
-      `.trim();
+💰 *Итого:* ${data.total || 0} ₽
+📝 *Комментарий:* ${data.comment || 'Нет'}
+        `.trim();
+      }
 
       const telegramUrl = `https://api.telegram.org/bot${env.BOT_TOKEN}/sendMessage`;
       const response = await fetch(telegramUrl, {

@@ -1564,7 +1564,7 @@
     //   phoneInput.value = masked;
     // });
 
-    document.getElementById('contactForm').addEventListener('submit', e => {
+    document.getElementById('contactForm').addEventListener('submit', async e => {
       e.preventDefault();
       const phoneDigits = phoneInput.value.replace(/\D/g, '');
       if (phoneDigits.length < 11) {
@@ -1576,11 +1576,33 @@
       phoneError.classList.remove('show');
 
       const data = {
+        type: 'consultation',
         name: document.getElementById('formName').value,
         phone: phoneInput.value,
         comment: document.getElementById('formComment').value
       };
-      console.log('Форма отправлена:', data);
+      console.log('Запрос консультации:', data);
+
+      const submitBtn = e.target.querySelector('.submit-btn');
+      submitBtn.disabled = true;
+      submitBtn.textContent = 'Отправка...';
+
+      const WORKER_URL = 'https://santehnika-bot.slenderbit10.workers.dev/';
+
+      try {
+        const res = await fetch(WORKER_URL, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(data),
+        });
+        const text = await res.text();
+        console.log('Ответ Worker:', res.status, text);
+      } catch (err) {
+        console.error('Ошибка:', err.message);
+      }
+
+      submitBtn.disabled = false;
+      submitBtn.textContent = 'Отправить';
       alert('Спасибо! Мы свяжемся с вами');
       e.target.reset();
     });
