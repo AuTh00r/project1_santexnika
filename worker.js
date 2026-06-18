@@ -32,7 +32,7 @@ export default {
       } else {
         const itemsList = data.items
           ? data.items
-              .map((item) => `• ${item.name} — ${item.price} ₽ × ${item.qty}`)
+              .map((item) => `• ${item.name} — ${item.price} Р × ${item.qty}`)
               .join('\n')
           : 'Не указан';
 
@@ -49,7 +49,7 @@ export default {
 *Состав заказа:*
 ${itemsList}
 
-💰 *Итого:* ${data.total || 0} ₽
+💰 *Итого:* ${data.total || 0} Р
 📝 *Комментарий:* ${data.comment || 'Нет'}
         `.trim();
       }
